@@ -1,0 +1,7 @@
+[package]
+name = "turnout-for-what"
+version = "0.1.0"
+authors = ["John Wrenn <john_wrenn@brown.edu>"]
+
+[[bin]]
+name = "tfw"
