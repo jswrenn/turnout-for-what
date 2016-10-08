@@ -7,40 +7,33 @@ Usage
 -----
 ::
 
-    tfw SWITCH FILES...
+    tfw SWITCH
 
 ``SWITCH``
-    A file descriptor yielding a stream of line-separated numbers. For every byte received from stdin, the last number received from SWITCH indicates the index of the FILE that the byte should be redirected to.
-
-``FILES``
-    One or more file paths.
+    A file descriptor yielding a stream of line-separated paths. For every line received from stdin, the last path received from SWITCH indicates the file that the line should be redirected to.
 
 Example
 -------
 A load-balancer for the natural numbers::
 
-  #!/usr/bin/env bash
-  i=0;
-  echo "$i" > nat
-  trap "rm nat *.txt" EXIT
+    #!/usr/bin/env bash
 
-  while true; do
-    wc -l *.txt
-    sleep 0.2
-    clear
-  done &
+    trap "rm -f nat {0..4}; pkill -P $$" EXIT
 
-  while true; do
-    sleep 0.2;
-    i=$(expr $i + 1);
-    echo "$i";
-  done \
-    | tee -a nat \
-    | cargo run -- \
-      <(while true; do
-          echo $(expr "$(tail -n 1 nat)" % 5)
-        done) \
-      0.txt 1.txt 2.txt 3.txt 4.txt
+    touch nat {0..4}
+
+    while true; do
+      echo $((i++))
+      sleep 0.2;
+    done > nat &
+
+    tail -f nat | cargo run -- <(tail -f nat | xargs -I{} expr {} % 5) &
+
+    while true; do
+      sleep 0.2
+      clear
+      wc -l {0..4}
+    done
 
 This script will create five text files, balance the natural numbers 
 between them, and continuously print their line counts.

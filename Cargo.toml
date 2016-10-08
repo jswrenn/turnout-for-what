@@ -1,7 +1,10 @@
 [package]
 name = "turnout-for-what"
-version = "0.1.0"
-authors = ["John Wrenn <john_wrenn@brown.edu>"]
+version = "0.2.0"
+authors = ["Jack Wrenn <me@jswrenn.com>"]
 
 [[bin]]
 name = "tfw"
+
+[dependencies]
+clap = "2.14.0"
